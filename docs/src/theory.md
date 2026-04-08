@@ -127,6 +127,13 @@ S = A H^{-1} A^\top \in \mathbb{R}^{m \times m}.
 
 Once $\delta y$ is found, $\delta n$ is recovered by back-substitution.
 
+**Implementation.** $S$ is built as a single BLAS GEMM:
+$S = \tilde{A} A^\top$ where $\tilde{A}_{ik} = A_{ik}/h_k$ is computed
+in-place. The RHS is then the BLAS GEMV $e_w - \tilde{A}\,e_x$, and
+$\delta n$ is recovered by the BLAS GEMV $A^\top\!\delta y$.
+All three operations reuse the same pre-allocated buffer $\tilde{A}$
+(field `AoverH` of [`NewtonStep`](@ref)).
+
 The total cost is $O(n_s m^2)$ to build $S$ and $O(m^3)$ to factor it.
 Since $m$ (number of conserved elements) is typically $\leq 15$, this is far
 cheaper than factoring the full $(n_s + m)$-dimensional system.
@@ -266,9 +273,21 @@ S\, \frac{\partial y^*}{\partial \mu_k^0} = -\frac{A_{:k}}{h_k},
 -H^{-1}\!\left(e_k + A^\top \frac{\partial y^*}{\partial \mu_k^0}\right).
 ```
 
-Both sensitivity matrices require only $m$ back-substitutions against the
-already-factored $S$, so the total cost is $O(m^3)$ — negligible compared
-to the solve itself.
+**Implementation.** Both sensitivity matrices are computed with a single
+batched solve (BLAS TRSM) followed by a BLAS GEMM, rather than $n_s$
+sequential scalar solves:
+
+```math
+\frac{\partial Y^*}{\partial \mu^0} = S^{-1} \left(-\tilde{A}\right),
+\qquad
+\frac{\partial N^*}{\partial \mu^0} = -H^{-1}\!\left(I + A^\top \frac{\partial Y^*}{\partial \mu^0}\right),
+```
+
+where $\tilde{A}_{ik} = A_{ik}/h_k$ (the same buffer built during the last Newton step).
+Using a matrix right-hand side triggers BLAS level-3 (TRSM + GEMM) instead of $n_s$
+level-2 (TRSV + GEMV) calls — a significant speedup when $n_s \gtrsim 20$.
+
+The total cost is $O(n_s m^2 + n_s^2 m)$ — negligible compared to the solve itself.
 
 ## Variable scaling in the SciML interface
 

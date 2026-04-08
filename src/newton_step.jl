@@ -22,14 +22,25 @@
 """
     NewtonStep{T}
 
-Workspace for the Schur-complement Newton solver. Pre-allocates the
-Schur matrix S and its factorisation to avoid allocations in the hot loop.
+Workspace for the Schur-complement Newton solver. All matrices and vectors
+are pre-allocated once and reused across Newton iterations.
+
+Fields:
+- `S`:      Schur complement `A * diag(1/h) * A'`  (m × m)
+- `rhs`:    RHS `ew - A * diag(1/h) * ex` for the Schur system (m,)
+- `dn`:     primal Newton step δn (ns,)
+- `dy`:     dual Newton step δy (m,)
+- `d`:      equilibration diagonal `sqrt.(diag(S))` (m,)
+- `AoverH`: buffer for `A ./ h'` (m × ns), shared between the Schur build
+            (`S = AoverH * A'`) and the RHS computation (`rhs = ew - AoverH * ex`)
 """
 mutable struct NewtonStep{T <: Real}
     S::Matrix{T}          # Schur complement A H⁻¹ Aᵀ (m × m)
     rhs::Vector{T}        # RHS for Schur system (m,)
     dn::Vector{T}         # primal step (ns,)
     dy::Vector{T}         # dual step (m,)
+    d::Vector{T}          # equilibration diagonal sqrt(diag(S)) (m,)
+    AoverH::Matrix{T}     # A ./ h'  (m × ns) — reusable buffer
 end
 
 function NewtonStep(ns::Int, m::Int, T::Type = Float64)
@@ -38,6 +49,8 @@ function NewtonStep(ns::Int, m::Int, T::Type = Float64)
         zeros(T, m),
         zeros(T, ns),
         zeros(T, m),
+        zeros(T, m),
+        zeros(T, m, ns),
     )
 end
 
@@ -64,29 +77,15 @@ function compute_step!(
         ew::AbstractVector,
     )
     A = can.A
-    m, ns = size(A)
+    m = size(A, 1)
 
-    # Schur complement: S = A H⁻¹ Aᵀ
-    # S[i,j] = Σₖ A[i,k] * A[j,k] / h[k]
-    @inbounds for j in 1:m
-        for i in 1:j
-            s = zero(eltype(h))
-            for k in 1:ns
-                s += A[i, k] * A[j, k] / h[k]
-            end
-            ws.S[i, j] = s
-            ws.S[j, i] = s
-        end
-    end
+    # Schur complement: S = A H⁻¹ Aᵀ  (BLAS GEMM)
+    ws.AoverH .= A ./ h'          # m × ns : AoverH[i,k] = A[i,k] / h[k]
+    mul!(ws.S, ws.AoverH, A')     # S = AoverH * A'
 
-    # RHS: ew - A H⁻¹ ex
-    @inbounds for i in 1:m
-        r = zero(eltype(h))
-        for k in 1:ns
-            r += A[i, k] * ex[k] / h[k]
-        end
-        ws.rhs[i] = ew[i] - r
-    end
+    # RHS: ew - A H⁻¹ ex  (BLAS GEMV)
+    mul!(ws.rhs, ws.AoverH, ex)   # rhs = AoverH * ex
+    ws.rhs .= ew .- ws.rhs        # rhs = ew - A H⁻¹ ex
 
     # Solve S dy = rhs  (LU factorisation, m × m).
     #
@@ -113,28 +112,22 @@ function compute_step!(
     # species span many orders of magnitude.
     # Mathematics: let D = diag(sqrt(diag(S))), solve
     #   (D⁻¹ S D⁻¹)(D dy) = D⁻¹ rhs  →  unscale  dy = D⁻¹ dy'.
-    d = Vector{T_s}(undef, m)
     @inbounds for i in 1:m
-        d[i] = sqrt(ws.S[i, i])
+        ws.d[i] = sqrt(ws.S[i, i])
     end
     @inbounds for i in 1:m
-        ws.rhs[i] /= d[i]
+        ws.rhs[i] /= ws.d[i]
         for j in 1:m
-            ws.S[i, j] /= d[i] * d[j]
+            ws.S[i, j] /= ws.d[i] * ws.d[j]
         end
     end
     S_lu = LinearAlgebra.lu!(ws.S)
     ws.dy .= S_lu \ ws.rhs
-    ws.dy ./= d    # unscale: dy = D⁻¹ dy'
+    ws.dy ./= ws.d    # unscale: dy = D⁻¹ dy'
 
-    # Recover dn = -H⁻¹ (ex + Aᵀ dy)
-    @inbounds for k in 1:ns
-        atdy = zero(eltype(ex))
-        for i in 1:m
-            atdy += A[i, k] * ws.dy[i]
-        end
-        ws.dn[k] = -(ex[k] + atdy) / h[k]
-    end
+    # Recover dn = -H⁻¹ (ex + Aᵀ dy)  (BLAS GEMV)
+    mul!(ws.dn, A', ws.dy)          # dn = A' * dy
+    ws.dn .= -(ex .+ ws.dn) ./ h   # dn = -(ex + A' dy) / h
 
     return ws.dn, ws.dy
 end

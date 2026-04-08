@@ -67,7 +67,6 @@ function sensitivity(
         h::AbstractVector,
         μ,
     ) where {T}
-    ns = prob.ns
     m = prob.m
     A = prob.A
 
@@ -86,43 +85,26 @@ function sensitivity(
     # Dual block:    A ∂n/∂b_j = e_j
     # Substituting:  -S ∂y/∂b_j = e_j  → S ∂y/∂b_j = -e_j
     # Then:          ∂n/∂b_j = -H⁻¹ Aᵀ ∂y/∂b_j = H⁻¹ Aᵀ S⁻¹ e_j
-    ∂n_∂b = zeros(Tv, ns, m)
+    # ∂y/∂b : solve all m RHS simultaneously (BLAS TRSM)
     ∂y_∂b = S_lu \ Matrix{Tv}(-I, m, m)  # m × m : each column = ∂y/∂b_j = -S⁻¹ e_j
-    for j in 1:m
-        for k in 1:ns
-            atdy = zero(Tv)
-            for i in 1:m
-                atdy += A[i, k] * ∂y_∂b[i, j]
-            end
-            ∂n_∂b[k, j] = -atdy / h[k]   # = H⁻¹ Aᵀ S⁻¹ e_j
-        end
-    end
+    # ∂n/∂b = -H⁻¹ Aᵀ ∂y/∂b  (BLAS GEMM)
+    ∂n_∂b = -(A' * ∂y_∂b) ./ h           # ns × m
 
     # ── ∂n*/∂(μ⁰/RT) ─────────────────────────────────────────────────────────
     # Perturbing μ⁰ₖ/RT shifts ∇f by eₖ (one unit in direction k).
     # dF/d(μ⁰ₖ) = [ eₖ; 0 ]  (primal rhs = eₖ, dual rhs = 0)
-    # Schur: S dy_k = -(A H⁻¹ eₖ) = -(A[:,k] / h[k])
-    #        dn_k   = -H⁻¹ (eₖ + Aᵀ dy_k)
-    ∂n_∂μ0 = zeros(Tv, ns, ns)
-    rhs_dual_μ0 = zeros(Tv, m)
-    for k in 1:ns
-        # build RHS for Schur system
-        for i in 1:m
-            rhs_dual_μ0[i] = -A[i, k] / h[k]
-        end
-        dy_k = S_lu \ rhs_dual_μ0
-
-        # recover dn
-        for l in 1:ns
-            atdy = zero(Tv)
-            for i in 1:m
-                atdy += A[i, l] * dy_k[i]
-            end
-            # primal residual: eₖ contributes δ_{lk}
-            ek = l == k ? one(Tv) : zero(Tv)
-            ∂n_∂μ0[l, k] = -(ek + atdy) / h[l]
-        end
-    end
+    # Schur: S DY = -(A H⁻¹)   [m × ns, all ns RHS at once]
+    #        dn_k = -H⁻¹ (eₖ + Aᵀ DY[:,k])
+    #
+    # Vectorised form (single BLAS TRSM + GEMM):
+    #   RHS_μ0 = -(A ./ h')           m × ns
+    #   DY_μ0  = S⁻¹ RHS_μ0           m × ns
+    #   ∂n_∂μ0 = -(A' * DY_μ0) ./ h   ns × ns
+    #   diagonal correction: subtract δ_{lk}/h[l]
+    RHS_μ0 = Matrix{Tv}(-(A ./ h'))             # m × ns
+    DY_μ0  = S_lu \ RHS_μ0                      # m × ns  (BLAS TRSM)
+    ∂n_∂μ0 = -(A' * DY_μ0) ./ h                # ns × ns (BLAS GEMM)
+    ∂n_∂μ0[LinearAlgebra.diagind(∂n_∂μ0)] .-= one(Tv) ./ h  # δ_{lk}/h[l] term
 
     return SensitivityResult{Tv}(∂n_∂b, ∂n_∂μ0)
 end
