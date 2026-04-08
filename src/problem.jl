@@ -1,4 +1,4 @@
-# ── problem.jl ─────────────────────────────────────────────────────────────────
+﻿# ── problem.jl ─────────────────────────────────────────────────────────────────
 # Core data structures: OptimaProblem, OptimaState, OptimaResult, OptimaOptions
 
 """

@@ -1,5 +1,5 @@
-```@meta
-CurrentModule = Optima
+﻿```@meta
+CurrentModule = OptimaJL
 ```
 
 # Warm Start
@@ -13,8 +13,8 @@ reduces the iteration count by 50–90 % and avoids the cold-start lifting heuri
 Pass a previous [`OptimaResult`](@ref) as the `u0` keyword argument:
 
 ```julia
-using Optima
-import Optima: solve
+using OptimaJL
+import OptimaJL: solve
 
 μ⁰ = [0.0, 1.0, 2.0]
 G(n, p)    = sum(n[i] * (p.μ⁰[i] + log(n[i])) for i in eachindex(n))
@@ -72,7 +72,7 @@ an internal `Ref`. Consecutive calls to `SciMLBase.solve` on related problems wi
 warm-start transparently:
 
 ```julia
-using Optima
+using OptimaJL
 
 alg = OptimaOptimizer(tol=1e-10, warm_start=true)
 

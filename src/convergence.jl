@@ -1,4 +1,4 @@
-# ── convergence.jl ─────────────────────────────────────────────────────────────
+﻿# ── convergence.jl ─────────────────────────────────────────────────────────────
 # KKT convergence criteria and iteration logging.
 #
 # Convergence is declared when the scaled KKT error drops below `tol`:
@@ -77,7 +77,7 @@ function log_final(state::OptimaState, opts::OptimaOptions)
     if opts.verbose
         status = state.converged ? "CONVERGED" : "MAX_ITER"
         println(
-            "  [Optima] ", status,
+            "  [OptimaJL] ", status,
             " after ", state.iter, " iterations",
             " | err = ", _fmt_sci(max(state.error_opt, state.error_feas)),
         )

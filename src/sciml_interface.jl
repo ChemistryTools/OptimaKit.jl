@@ -1,9 +1,9 @@
-# ── sciml_interface.jl ─────────────────────────────────────────────────────────
+﻿# ── sciml_interface.jl ─────────────────────────────────────────────────────────
 # Drop-in replacement for IpoptOptimizer() in ChemistryLab.jl.
 #
 # Usage (ChemistryLab side — no internal changes required):
 #
-#   using Optima
+#   using OptimaJL
 #   state_eq = equilibrate(state0; solver = OptimaOptimizer())
 #
 # The `OptimaOptimizer` struct satisfies the SciML `AbstractOptimizationAlgorithm`
@@ -18,7 +18,7 @@
 """
     OptimaOptimizer
 
-Drop-in SciML optimizer implementing the Optima primal-dual interior-point
+Drop-in SciML optimizer implementing the OptimaJL primal-dual interior-point
 algorithm for Gibbs-energy minimisation.
 
 # Constructors
@@ -76,7 +76,7 @@ end
     SciMLBase.solve(opt_prob, alg::OptimaOptimizer; kwargs...) -> OptimizationSolution
 
 Convert a SciML `OptimizationProblem` to an internal `OptimaProblem` and solve
-with the Optima primal-dual method.
+with the OptimaJL primal-dual method.
 
 The `OptimizationProblem` is expected to carry:
 - `f.f`:       objective `(u, p) -> scalar`

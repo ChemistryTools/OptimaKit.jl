@@ -1,5 +1,5 @@
-```@meta
-CurrentModule = Optima
+﻿```@meta
+CurrentModule = OptimaJL
 ```
 
 # Basic Usage
@@ -9,8 +9,8 @@ CurrentModule = Optima
 The simplest non-trivial Gibbs problem: three species sharing one conserved quantity.
 
 ```julia
-using Optima
-import Optima: solve
+using OptimaJL
+import OptimaJL: solve
 
 μ⁰ = [0.0, 1.0, 2.0]
 

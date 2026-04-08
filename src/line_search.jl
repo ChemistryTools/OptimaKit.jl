@@ -1,4 +1,4 @@
-# ── line_search.jl ─────────────────────────────────────────────────────────────
+﻿# ── line_search.jl ─────────────────────────────────────────────────────────────
 # Filter line search combining feasibility and objective decrease.
 #
 # Strategy (Wächter & Biegler 2006 style, simplified):

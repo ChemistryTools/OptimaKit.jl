@@ -1,4 +1,4 @@
-@testset "Solver — toy Gibbs problem" begin
+﻿@testset "Solver — toy Gibbs problem" begin
     # ── Problem: minimize G(n) = Σ nᵢ (μᵢ⁰ + ln nᵢ)
     #    subject to  A n = b,  n ≥ ε
     #

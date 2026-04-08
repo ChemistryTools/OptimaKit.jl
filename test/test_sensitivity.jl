@@ -1,4 +1,4 @@
-@testset "Sensitivity ∂n*/∂b and ∂n*/∂μ⁰" begin
+﻿@testset "Sensitivity ∂n*/∂b and ∂n*/∂μ⁰" begin
     # Same 1-row ideal Gibbs problem as test_solver
     μ⁰ = [0.0, 1.0, 2.0]
 
@@ -22,10 +22,10 @@
 
     # Build Hessian diagonal at the solution
     n = result.n
-    hf = Optima.gibbs_hessian_diag(n)
+    hf = OptimaJL.gibbs_hessian_diag(n)
     # barrier at convergence: μ is very small, use eps as proxy
     μ_conv = result.iterations > 0 ? 1.0e-14 : 1.0e-14
-    h = Optima.hessian_diagonal(prob, n, μ_conv, hf)
+    h = OptimaJL.hessian_diagonal(prob, n, μ_conv, hf)
 
     sens = sensitivity(prob, n, result.y, h, μ_conv)
 

@@ -1,8 +1,8 @@
-```@meta
-CurrentModule = Optima
+﻿```@meta
+CurrentModule = OptimaJL
 ```
 
-# Optima.jl
+# OptimaJL.jl
 
 **Optima** is a Julia-native primal-dual interior-point solver for Gibbs-energy
 minimisation in equilibrium chemistry.

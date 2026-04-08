@@ -1,21 +1,21 @@
-using Optima
+﻿using OptimaJL
 using Documenter
 
 DocMeta.setdocmeta!(
-    Optima,
+    OptimaJL,
     :DocTestSetup,
-    :(using Optima; import Optima: solve);
+    :(using OptimaJL; import OptimaJL: solve);
     recursive = true,
 )
 
 makedocs(;
     clean    = false,
-    modules  = [Optima],
+    modules  = [OptimaJL],
     authors  = "Jean-François Barthélémy",
-    sitename = "Optima.jl",
-    remotes  = Dict(".." => Documenter.Remotes.GitHub("ChemistryTools", "Optima.jl")),
+    sitename = "OptimaJL.jl",
+    remotes  = Dict(".." => Documenter.Remotes.GitHub("ChemistryTools", "OptimaJL.jl")),
     format   = Documenter.HTML(;
-        canonical  = "https://ChemistryTools.github.io/Optima.jl",
+        canonical  = "https://ChemistryTools.github.io/OptimaJL.jl",
         edit_link  = "main",
         prettyurls = (get(ENV, "CI", nothing) == "true"),
         collapselevel = 1,
@@ -36,5 +36,5 @@ makedocs(;
 )
 
 if get(ENV, "CI", nothing) == "true"
-    deploydocs(; repo = "github.com/ChemistryTools/Optima.jl", devbranch = "main")
+    deploydocs(; repo = "github.com/ChemistryTools/OptimaJL.jl", devbranch = "main")
 end

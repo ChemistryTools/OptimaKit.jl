@@ -1,4 +1,4 @@
-# ── residual.jl ────────────────────────────────────────────────────────────────
+﻿# ── residual.jl ────────────────────────────────────────────────────────────────
 # KKT residual F(n, y; μ) and Hessian structure for Gibbs minimisation.
 #
 # KKT conditions for the log-barrier problem:

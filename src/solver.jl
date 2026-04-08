@@ -1,4 +1,4 @@
-# ── solver.jl ──────────────────────────────────────────────────────────────────
+﻿# ── solver.jl ──────────────────────────────────────────────────────────────────
 # Main primal-dual interior-point iteration loop.
 #
 # Algorithm sketch (Wächter & Biegler 2006 / Optima-style):

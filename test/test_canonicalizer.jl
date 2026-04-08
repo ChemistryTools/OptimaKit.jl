@@ -1,4 +1,4 @@
-@testset "Canonicalizer" begin
+﻿@testset "Canonicalizer" begin
     # 2 elements, 4 species: H₂O, H⁺, OH⁻, H₂
     # Conservation: [H, O] — rows correspond to elements
     A = Float64[
@@ -22,15 +22,15 @@
 
     # Schur complement is symmetric positive semi-definite
     h = ones(4)
-    S = Optima.schur_complement(can, h)
+    S = OptimaJL.schur_complement(can, h)
     @test S ≈ S'
     @test all(eigvals(S) .>= -1.0e-12)
 
     # solve_B and solve_Bt: round-trip
     rhs = ones(2)
-    x = Optima.solve_B(can, rhs)
+    x = OptimaJL.solve_B(can, rhs)
     @test A[:, can.jb] * x ≈ rhs atol = 1.0e-12
 
-    xt = Optima.solve_Bt(can, rhs)
+    xt = OptimaJL.solve_Bt(can, rhs)
     @test A[:, can.jb]' * xt ≈ rhs atol = 1.0e-12
 end

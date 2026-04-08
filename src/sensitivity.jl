@@ -1,4 +1,4 @@
-# ── sensitivity.jl ─────────────────────────────────────────────────────────────
+﻿# ── sensitivity.jl ─────────────────────────────────────────────────────────────
 # Sensitivity analysis: ∂n*/∂c by implicit differentiation of the KKT system.
 #
 # At the solution u* = (n*, y*) the KKT conditions are:
