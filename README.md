@@ -9,7 +9,7 @@ equilibrium chemistry.
 
 ## What it does
 
-Optima solves constrained optimisation problems of the form
+OptimaSolver solves constrained optimisation problems of the form
 
 ```
 minimize    f(n, p)              (e.g. Gibbs energy G(n) = Σ nᵢ(μᵢ⁰/RT + ln nᵢ))
