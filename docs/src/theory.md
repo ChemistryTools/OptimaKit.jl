@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = OptimaLib
+CurrentModule = OptimaSolver
 ```
 
 # Theory

@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = OptimaLib
+CurrentModule = OptimaSolver
 ```
 
 # Basic Usage
@@ -9,8 +9,8 @@ CurrentModule = OptimaLib
 The simplest non-trivial Gibbs problem: three species sharing one conserved quantity.
 
 ```julia
-using OptimaLib
-import OptimaLib: solve
+using OptimaSolver
+import OptimaSolver: solve
 
 μ⁰ = [0.0, 1.0, 2.0]
 

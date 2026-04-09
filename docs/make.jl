@@ -1,21 +1,21 @@
-using OptimaLib
+using OptimaSolver
 using Documenter
 
 DocMeta.setdocmeta!(
-    OptimaLib,
+    OptimaSolver,
     :DocTestSetup,
-    :(using OptimaLib; import OptimaLib: solve);
+    :(using OptimaSolver; import OptimaSolver: solve);
     recursive = true,
 )
 
 makedocs(;
     clean    = false,
-    modules  = [OptimaLib],
+    modules  = [OptimaSolver],
     authors  = "Jean-François Barthélémy",
-    sitename = "OptimaLib.jl",
-    remotes  = Dict(".." => Documenter.Remotes.GitHub("ChemistryTools", "OptimaLib.jl")),
+    sitename = "OptimaSolver.jl",
+    remotes  = Dict(".." => Documenter.Remotes.GitHub("ChemistryTools", "OptimaSolver.jl")),
     format   = Documenter.HTML(;
-        canonical  = "https://ChemistryTools.github.io/OptimaLib.jl",
+        canonical  = "https://ChemistryTools.github.io/OptimaSolver.jl",
         edit_link  = "main",
         prettyurls = (get(ENV, "CI", nothing) == "true"),
         collapselevel = 1,
@@ -36,5 +36,5 @@ makedocs(;
 )
 
 if get(ENV, "CI", nothing) == "true"
-    deploydocs(; repo = "github.com/ChemistryTools/OptimaLib.jl", devbranch = "main")
+    deploydocs(; repo = "github.com/ChemistryTools/OptimaSolver.jl", devbranch = "main")
 end
