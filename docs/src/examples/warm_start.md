@@ -14,7 +14,6 @@ Pass a previous [`OptimaResult`](@ref) as the `u0` keyword argument:
 
 ```julia
 using OptimaSolver
-import OptimaSolver: solve
 
 μ⁰ = [0.0, 1.0, 2.0]
 G(n, p)    = sum(n[i] * (p.μ⁰[i] + log(n[i])) for i in eachindex(n))

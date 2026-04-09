@@ -20,7 +20,6 @@ already-factored Schur complement $S = A H^{-1} A^\top$).
 
 ```julia
 using OptimaSolver
-import OptimaSolver: solve, gibbs_hessian_diag, hessian_diagonal
 
 μ⁰ = [0.0, 1.0, 2.0]
 G(n, p)    = sum(n[i] * (p.μ⁰[i] + log(n[i])) for i in eachindex(n))

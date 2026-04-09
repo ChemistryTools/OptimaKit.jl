@@ -4,7 +4,7 @@ using Documenter
 DocMeta.setdocmeta!(
     OptimaSolver,
     :DocTestSetup,
-    :(using OptimaSolver; import OptimaSolver: solve);
+    :(using OptimaSolver);
     recursive = true,
 )
 

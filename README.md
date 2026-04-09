@@ -44,7 +44,6 @@ Requires Julia ≥ 1.10.
 
 ```julia
 using OptimaSolver
-import OptimaSolver: solve   # solve is not exported; use qualified name or import
 
 # Ideal three-species Gibbs problem: minimize Σ nᵢ(μᵢ⁰ + ln nᵢ) subject to Σ nᵢ = 1
 μ⁰ = [0.0, 1.0, 2.0]
@@ -68,7 +67,7 @@ println(result.iterations) # typically 15–25
 [ChemistryLab.jl](https://github.com/ChemistryTools/ChemistryLab.jl):
 
 ```julia
-using ChemistryLab, Optima
+using ChemistryLab, OptimaSolver
 state_eq = equilibrate(state0; solver=OptimaOptimizer(tol=1e-10, verbose=false))
 ```
 

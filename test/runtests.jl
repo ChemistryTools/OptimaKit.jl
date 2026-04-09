@@ -1,6 +1,6 @@
 using Test
 using OptimaSolver
-import OptimaSolver: solve, solve!   # not exported; import explicitly for tests
+import OptimaSolver: solve!          # solve! is not exported; import explicitly for tests
 using LinearAlgebra
 using ForwardDiff
 

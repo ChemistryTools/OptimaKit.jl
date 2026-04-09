@@ -40,7 +40,6 @@ giving $n^* \approx (0.665,\; 0.245,\; 0.090)$.
 
 ```julia
 using OptimaSolver
-import OptimaSolver: solve  # solve is intentionally not exported
 
 # --- Objective and gradient ---
 μ⁰ = [0.0, 1.0, 2.0]
@@ -72,12 +71,6 @@ println("n* = ", round.(result.n; digits=6)) # [0.665241, 0.244728, 0.090031]
 n_exact = exp.(-μ⁰) ./ sum(exp.(-μ⁰))
 @assert maximum(abs, result.n .- n_exact) < 1e-7
 ```
-
-!!! note "Why `import OptimaSolver: solve`?"
-    `solve` is intentionally **not** in Optima's `export` list to avoid
-    conflicts with other packages (e.g. `SciMLBase.solve`).
-    Use the qualified name `Optima.solve(...)` or add
-    `import OptimaSolver: solve` at the top of your file.
 
 ## Interpreting `OptimaResult`
 

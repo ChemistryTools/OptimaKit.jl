@@ -11,7 +11,7 @@ and is designed as a drop-in replacement for `IpoptOptimizer` inside
 ## Usage with ChemistryLab.jl
 
 ```julia
-using ChemistryLab, Optima
+using ChemistryLab, OptimaSolver
 
 # Build a ChemicalState as usual, then equilibrate with OptimaOptimizer
 state_eq = equilibrate(state0; solver=OptimaOptimizer(tol=1e-10, verbose=false))
@@ -82,7 +82,7 @@ unchanged and the next call falls back to a cold start from `opt_prob.u0`.
 constraints as equalities:
 
 ```julia
-using SciMLBase, Optima
+using OptimaSolver
 
 ns = 3
 A = ones(1, ns)

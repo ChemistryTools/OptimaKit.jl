@@ -21,9 +21,9 @@ Canonicalizer
 
 ## Solver
 
-`solve` and `solve!` are intentionally **not exported** to avoid naming conflicts
-with `SciMLBase.solve`. Use the qualified names `OptimaSolver.solve(...)` /
-`OptimaSolver.solve!(...)`, or add `import OptimaSolver: solve` at the top of your file.
+`solve` is exported and re-exports `SciMLBase.solve`, so `using OptimaSolver` is
+sufficient. `solve!` (the in-place variant) is not exported; use the qualified name
+`OptimaSolver.solve!(...)` or `import OptimaSolver: solve!`.
 
 ```@docs
 OptimaSolver.solve

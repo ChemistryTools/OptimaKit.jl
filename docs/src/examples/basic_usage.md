@@ -10,7 +10,6 @@ The simplest non-trivial Gibbs problem: three species sharing one conserved quan
 
 ```julia
 using OptimaSolver
-import OptimaSolver: solve
 
 μ⁰ = [0.0, 1.0, 2.0]
 

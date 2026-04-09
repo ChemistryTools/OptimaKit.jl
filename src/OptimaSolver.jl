@@ -45,9 +45,8 @@ export OptimaProblem, OptimaOptions, OptimaState, OptimaResult
 # Canonicalizer (exposed for reuse across solves with fixed A)
 export Canonicalizer
 
-# Solver  (not exported — extend SciMLBase.solve for OptimaProblem via
-# sciml_interface.jl; raw solve/solve! accessible as OptimaSolver.solve/solve!)
-# export solve, solve!
+# Solver  (solve is exported and re-exports SciMLBase.solve;
+# solve! is internal — accessible as OptimaSolver.solve!)
 
 # Sensitivity
 export SensitivityResult, sensitivity
