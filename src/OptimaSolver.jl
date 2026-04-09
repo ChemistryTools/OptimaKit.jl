@@ -23,7 +23,7 @@ module OptimaSolver
 using LinearAlgebra
 import ForwardDiff
 import SciMLBase
-using SciMLBase: solve
+import SciMLBase: solve
 
 # ── Source files (dependency order) ──────────────────────────────────────────
 include("problem.jl")           # OptimaProblem, OptimaState, OptimaResult, OptimaOptions
